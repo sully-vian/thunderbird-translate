@@ -6,10 +6,10 @@ if (typeof messenger === "undefined") {
 
 messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
     const message = await messenger.messageDisplay.getDisplayedMessage(tab.id);
-    await translateEmail(message);
+    await translateEmail(message, tab.id);
 });
 
-async function translateEmail(message) {
+async function translateEmail(message, tabId) {
     const fullMessage = await messenger.messages.getFull(message.id);
     const emailText = extractTextFromMessage(fullMessage);
 
@@ -26,7 +26,11 @@ async function translateEmail(message) {
     console.log("translatedHTML:");
     console.log(translatedHTML);
 
-    // TODO: find a way to display
+    // Send a message to the content script to display the banner
+    messenger.tabs.sendMessage(tabId, {
+        action: "showBanner",
+        translatedHTML: translatedHTML
+    });
 }
 
 function extractTextFromMessage(fullMessage) {
@@ -75,9 +79,8 @@ Content to translate:
 async function callGemini(htmlText) {
 
     const storage = await browser.storage.local.get("apiKey");
-    const API_KEY = storage.apiKey;
 
-    if (!API_KEY) {
+    if (!storage.apiKey) {
         console.log("API key is not set.Please configure it in the extension settings.");
         throw new Error("API key is missing.");
     }
@@ -89,7 +92,7 @@ async function callGemini(htmlText) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-goog-api-key": API_KEY,
+            "X-goog-api-key": storage.apiKey,
         },
         body: JSON.stringify({
             contents: [

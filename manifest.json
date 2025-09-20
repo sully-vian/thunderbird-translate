@@ -5,11 +5,12 @@
     "version": "1.0",
     "author": "sully-vian",
     "message_display_action": {
-        "default_title": "Translate"
+        "default_title": "Translate Mail"
     },
     "permissions": [
         "messagesRead",
-        "messagesModify"
+        "messagesModify",
+        "storage"
     ],
     "background": {
         "scripts": [

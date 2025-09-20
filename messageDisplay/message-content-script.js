@@ -1,4 +1,11 @@
-async function showBanner() {
+// Listen for messages from the background script
+browser.runtime.onMessage.addListener((message) => {
+    if (message.action === "showBanner") {
+        showBanner(message.translatedHTML);
+    }
+});
+
+async function showBanner(translatedHTML) {
     console.log("show banner");
     const banner = document.createElement("div");
     banner.style.backgroundColor = "var(--color-primary-soft)";
@@ -13,11 +20,9 @@ async function showBanner() {
 
     const bannerText = document.createElement("div");
     bannerText.className = "thunderbirdMessageDisplayActionExample_Text";
-    bannerText.innerText = "Here is a Banner";
+    bannerText.innerText = translatedHTML;
 
     banner.appendChild(bannerText);
 
     document.body.insertBefore(banner, document.body.firstChild);
 }
-
-showBanner();
