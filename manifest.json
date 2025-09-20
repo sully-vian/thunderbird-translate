@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Thunderbird Translate",
+    "description": "A translation extension which uses the Gemini API to translate you mails.",
+    "version": "1.0",
+    "author": "sully-vian",
+    "message_display_action": {
+        "default_title": "Translate"
+    },
+    "permissions": [
+        "messagesRead",
+        "messagesModify"
+    ],
+    "background": {
+        "scripts": [
+            "background.js",
+            "main.js"
+        ],
+        "persistent": false
+    },
+    "options_ui": {
+        "page": "options/options.html",
+        "open_in_tab": true,
+        "browser_style": true
+    }
+}

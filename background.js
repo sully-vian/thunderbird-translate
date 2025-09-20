@@ -58,7 +58,6 @@ function extractTextFromMessage(fullMessage) {
     return plainContent || htmlContent;
 }
 
-const API_KEY = "REDACTED";
 const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 const prompt = `
 You are a professional translator. Translate the following email to English.
@@ -74,6 +73,14 @@ Content to translate:
 `;
 
 async function callGemini(htmlText) {
+
+    const storage = await browser.storage.local.get("apiKey");
+    const API_KEY = storage.apiKey;
+
+    if (!API_KEY) {
+        console.log("API key is not set.Please configure it in the extension settings.");
+        throw new Error("API key is missing.");
+    }
 
     const fullPrompt = prompt + htmlText;
     console.log(fullPrompt);
