@@ -1,0 +1,20 @@
+{
+    "extensionName": {
+        "message": "Thunderbird Translate"
+    },
+    "extensionDescription": {
+        "message": "A translation extension which uses the Gemini API to translate you mails in one click."
+    },
+    "translateButton": {
+        "message": "Translate"
+    },
+    "loadingMessage": {
+        "message": "Translating..."
+    },
+    "invalidApiKey": {
+        "message": "Invalid API key. Please try again."
+    },
+    "apiKeySaved": {
+        "message": "API key saved successfully!"
+    }
+}

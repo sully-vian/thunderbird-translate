@@ -12,5 +12,7 @@ The desktop app has some predefined css root variables whose names can be found 
 
 ## TODO
 
-- [ ] Get the app language and define it as language target for the Gemini translation.
+- [x] Get the app language and define it as language target for the Gemini translation.
 - [ ] Store persistantly the API key.
+- [ ] Show the banner with loading message while translation is occuring.
+- [ ] Add close banner button (just hide, and just show if translation asked again, no requery API).

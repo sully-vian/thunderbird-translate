@@ -9,28 +9,42 @@ messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
     await translateEmail(message, tab.id);
 });
 
-async function translateEmail(message, tabId) {
+async function translateEmail(message, tabID) {
     const fullMessage = await messenger.messages.getFull(message.id);
-    const emailText = extractTextFromMessage(fullMessage);
+    const { content, html } = extractTextFromMessage(fullMessage);
 
-    if (emailText === undefined) {
+    if (content === undefined) {
         console.log("Failed to get message content");
+        messenger.tabs.sendMessage(tabID, {
+            action: "showBanner",
+            content: "Failed to get email content.",
+            success: false
+        });
         return;
-    } else {
-        console.log("success!");
     }
 
-    const translatedHTML = await callGemini(emailText);
+    try {
 
-    // end of code
-    console.log("translatedHTML:");
-    console.log(translatedHTML);
+        const translatedContent = await callGemini(content);
 
-    // Send a message to the content script to display the banner
-    messenger.tabs.sendMessage(tabId, {
-        action: "showBanner",
-        translatedHTML: translatedHTML
-    });
+        // Send a message to the content script to display the banner
+        messenger.tabs.sendMessage(tabID, {
+            action: "showBanner",
+            content: translatedContent,
+            success: true,
+            html: html
+        });
+    } catch (error) {
+        console.log("Translation failed:", error);
+
+        // send an error message to the content script
+        messenger.tabs.sendMessage(tabID, {
+            action: "showBanner",
+            content: error.message || "An unexpected error occured during translation",
+            success: false,
+            html: false
+        });
+    }
 }
 
 function extractTextFromMessage(fullMessage) {
@@ -58,13 +72,28 @@ function extractTextFromMessage(fullMessage) {
         searchParts(fullMessage.parts);
     }
 
-    // Prefer one
-    return plainContent || htmlContent;
+    // prefer html
+    if (htmlContent) {
+        return {
+            content: htmlContent,
+            html: true
+        };
+    } else if (plainContent) {
+        return {
+            content: plainContent,
+            html: false
+        };
+    } else {
+        return {
+            content: undefined,
+            html: false
+        }
+    }
 }
 
 const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 const prompt = `
-You are a professional translator. Translate the following email to English.
+You are a professional translator. Translate the following email to ${browser.i18n.getUILanguage()}.
 
 CRITICAL RULES:
 - If the content contains HTML tags, preserve ALL HTML structure exactly
@@ -81,8 +110,7 @@ async function callGemini(htmlText) {
     const storage = await browser.storage.local.get("apiKey");
 
     if (!storage.apiKey) {
-        console.log("API key is not set.Please configure it in the extension settings.");
-        throw new Error("API key is missing.");
+        throw new Error("API key is not set. Please configure it in the extension settings.");
     }
 
     const fullPrompt = prompt + htmlText;
@@ -111,18 +139,21 @@ async function callGemini(htmlText) {
 
     const response = await fetch(url, request);
 
+    if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error?.message || "Translation failed due to an API error.");
+    }
+
     const data = await response.json();
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}\nMessage: ${data.error.message}`);
-    }
 
     // console.log(JSON.stringify(data, null, 2));
 
     // Access the actual text output:
     if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
         const translatedHTML = data.candidates[0].content.parts[0].text
-
-        return translatedHTML
+        return translatedHTML;
     }
+
+    throw new Error("The API response didn't have the expected form.");
 }
