@@ -1,8 +1,8 @@
 async function main() {
     // Register the message display script for all newly opened message tabs.
     messenger.messageDisplayScripts.register({
-        js: [{ file: "/src/messageDisplay/message-content-script.js" }],
-        css: [{ file: "/src/messageDisplay/message-content-styles.css" }],
+        js: [{ file: "/src/banner/banner.js" }],
+        css: [{ file: "/src/banner/banner.css" }],
     });
 
     // Inject script and CSS in all already open message tabs.
@@ -20,10 +20,10 @@ async function main() {
             }
         }
         browser.tabs.executeScript(messageTab.id, {
-            file: "/src/messageDisplay/message-content-script.js"
+            file: "/src/banner/banner.js"
         });
         browser.tabs.insertCSS(messageTab.id, {
-            file: "/src/messageDisplay/message-content-styles.css"
+            file: "/src/banner/banner.css"
         });
     }
 }

@@ -38,7 +38,7 @@ testButton.onclick = async () => {
 
         if (response.ok) {
             // Save the API key if the fetch is successful
-            await browser.storage.local.set({ apiKey });
+            await messenger.storage.local.set({ apiKey });
             statusPar.textContent = "API key saved successfully!";
             statusPar.style.color = "green";
 
@@ -47,7 +47,7 @@ testButton.onclick = async () => {
                 statusPar.textContent = "";
             }, 3000);
 
-            console.log(JSON.stringify(browser.storage.local));
+            console.log(JSON.stringify(messenger.storage.local));
         } else {
             // Notify the user if the API key is invalid
             statusPar.textContent = "Invalid API key. Please try again.";
@@ -74,7 +74,7 @@ testButton.onclick = async () => {
 
 
 async function main() {
-    const storage = await browser.storage.local.get("apiKey");
+    const storage = await messenger.storage.local.get("apiKey");
     if (storage.apiKey) {
         apiKeyInput.value = storage.apiKey;
         console.log("API found in storage");

@@ -1,7 +1,5 @@
 if (typeof messenger === "undefined") {
-    console.log("Messenger API not available");
-} else {
-    console.log("Messenger API available!");
+    console.error("Messenger API not available!");
 }
 
 messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
@@ -18,7 +16,8 @@ async function translateEmail(message, tabID) {
         messenger.tabs.sendMessage(tabID, {
             action: "showBanner",
             content: "Failed to get email content.",
-            success: false
+            status: "error",
+            html: false
         });
         return;
     }
@@ -31,7 +30,7 @@ async function translateEmail(message, tabID) {
         messenger.tabs.sendMessage(tabID, {
             action: "showBanner",
             content: translatedContent,
-            success: true,
+            status: "success",
             html: html
         });
     } catch (error) {
@@ -41,7 +40,7 @@ async function translateEmail(message, tabID) {
         messenger.tabs.sendMessage(tabID, {
             action: "showBanner",
             content: error.message || "An unexpected error occured during translation",
-            success: false,
+            status: "error",
             html: false
         });
     }
@@ -90,6 +89,17 @@ function extractTextFromMessage(fullMessage) {
         }
     }
 }
+
+// add listener for opening option page
+browser.runtime.onMessage.addListener((message) => {
+    console.log("recieved msg");
+    if (message.action === "openOptionsPage") {
+        // Open the options page
+        browser.tabs.create({
+            url: browser.runtime.getURL("/src/options/options.html")
+        });
+    }
+});
 
 const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 const prompt = `
