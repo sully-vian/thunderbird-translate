@@ -1,6 +1,6 @@
 {
 	"name": "thunderbird-translate",
-	"verson": "1.0.O",
+	"verson": "1.0.1",
 	"description": "A translation add-on which uses the Gemini API to translate your mails in one click.",
 	"scripts": {
 		"build": "web-ext build --overwrite-dest -n thunderbird-translate.xpi"
