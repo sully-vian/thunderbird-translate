@@ -1,47 +1,47 @@
 {
-    "manifest_version": 2,
-    "name": "Thunderbird Translate",
-    "description": "A translation extension which uses the Gemini API to translate you mails in one click.",
-    "version": "1.0",
-    "author": "sully-vian",
-    "default_locale": "en",
-    "applications": {
-        "gecko": {
-            "id": "thunderbird-translate@sully-vian",
-            "strict_min_version": "78.0"
-        }
-    },
-    "message_display_action": {
-        "default_title": "__MSG_translateButton__",
-        "default_icon": {
-            "16": "src/assets/icon-16.png",
-            "32": "src/assets/icon-32.png",
-            "64": "src/assets/icon-64.png",
-            "128": "src/assets/icon-128.png"
-        }
-    },
-    "permissions": [
-        "messagesRead",
-        "messagesModify",
-        "storage",
-        "tabs"
-    ],
-    "background": {
-        "scripts": [
-            "src/background/background.js",
-            "src/background/bannerRegister.js"
-        ],
-        "persistent": false
-    },
-    "options_ui": {
-        "page": "src/options/options.html",
-        "open_in_tab": true,
-        "browser_style": true
-    },
-    "icons": {
-        "16": "src/assets/icon-16.png",
-        "32": "src/assets/icon-32.png",
-        "64": "src/assets/icon-64.png",
-        "128": "src/assets/icon-128.png"
-    }
+	"manifest_version": 2,
+	"name": "Thunderbird Translate",
+	"description": "A translation add-on which uses the Gemini API to translate your mails in one click.",
+	"version": "1.0",
+	"author": "sully-vian",
+	"default_locale": "en",
+	"applications": {
+		"gecko": {
+			"id": "thunderbird-translate@sully-vian",
+			"strict_min_version": "78.0"
+		}
+	},
+	"message_display_action": {
+		"default_title": "__MSG_translateButton__",
+		"default_icon": {
+			"16": "src/assets/icon-16.png",
+			"32": "src/assets/icon-32.png",
+			"64": "src/assets/icon-64.png",
+			"128": "src/assets/icon-128.png"
+		}
+	},
+	"permissions": [
+		"messagesRead",
+		"messagesModify",
+		"storage",
+		"tabs"
+	],
+	"background": {
+		"scripts": [
+			"src/background/background.js",
+			"src/background/bannerRegister.js"
+		],
+		"persistent": false
+	},
+	"options_ui": {
+		"page": "src/options/options.html",
+		"open_in_tab": true,
+		"browser_style": true
+	},
+	"icons": {
+		"16": "src/assets/icon-16.png",
+		"32": "src/assets/icon-32.png",
+		"64": "src/assets/icon-64.png",
+		"128": "src/assets/icon-128.png"
+	}
 }

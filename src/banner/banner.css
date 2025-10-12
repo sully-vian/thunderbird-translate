@@ -1,31 +1,35 @@
 .translation-banner {
-    overflow-x: auto;
-    padding: 5px;
-    margin: 10px;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	overflow-x: auto;
+	padding: 5px;
+	margin: 10px;
+	font-family: var(--font-body);
+	font-size: var(--font-size-body);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border-color: var(--color-neutral-border);
+	border-style: solid;
+	border-width: var(--border-width);
 }
 
 .translation-banner.success {
-    background-color: var(--color-primary-soft);
-    color: var(--color-text-highlight);
+	background-color: var(--color-primary-soft);
+	color: var(--color-text-highlight);
 }
 
 .translation-banner.error {
-    background-color: var(--color-danger-soft);
-    color: var(--color-text-critical);
+	background-color: var(--color-danger-soft);
+	color: var(--color-text-critical);
 }
 
 #banner-text {
-    white-space: pre-wrap; /* Preserve line breaks and spaces */
+	white-space: pre-wrap;
+	/* Preserve line breaks and spaces */
 }
 
 #settings-link {
-    margin-left: auto;
-    color: var(--color-primary-default);
-    text-decoration: underline;
-    cursor: pointer;
+	margin-left: auto;
+	color: var(--color-primary-default);
+	text-decoration: underline;
+	cursor: pointer;
 }

@@ -34,16 +34,14 @@ Key requests:
 
 ## Checklist
 
-- [ ] Add `VENDORS` file listing DOMPurify source
-- [ ] Add `src/vendor/purify.min.js` (DOMPurify bundle)
-- [ ] Update `manifest.json` to include vendor script in background `scripts` before your extension scripts
-- [ ] Modify `src/background/bannerRegister.js` to register/inject vendor first
-- [ ] Sanitize translated HTML in `src/background/background.js` (use DOMPurify)
-- [ ] Replace `innerHTML` usage in `src/banner/banner.js` with safe DOM creation and `insertAdjacentHTML` only for sanitized HTML
-- [ ] Replace `innerText` with `textContent` where applicable
-- [ ] Add privacy/data notice to `src/options/options.html`
-- [ ] Update README and AMO listing assets (screenshots)
-- [ ] Run `npx web-ext lint`, fix warnings, run build, test, and re-submit
+- [x] Add `src/vendor/purify.min.js` (DOMPurify bundle)
+- [x] Modify `src/background/bannerRegister.js` to register/inject vendor first
+- [x] Sanitize translated HTML in `src/background/background.js` (use DOMPurify)
+- [x] Replace `innerHTML` usage in `src/banner/banner.js` with safe DOM creation and `insertAdjacentHTML` only for sanitized HTML
+- [x] Replace `innerText` with `textContent` where applicable
+- [x] Add privacy/data notice to `src/options/options.html`
+- [x] Update README and AMO listing assets (screenshots)
+- [x] Run `npx web-ext lint`, fix warnings, run build, test, and re-submit
 
 ---
 
@@ -60,7 +58,7 @@ Download the file above and place the minified bundle in `src/vendor/purify.min.
 
 ---
 
-### 2) bundle DOMPurify into the extension
+### 2) bundle DOMPurify into the add-on
 Download the minified build from the VENDORS URL and save it to `src/vendor/purify.min.js`.
 
 (Do not load DOMPurify from a CDN at runtime — vendorize it.)

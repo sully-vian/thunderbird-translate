@@ -1,11 +1,11 @@
 {
-  "name": "thunderbird-translate",
-  "verson": "1.0.O",
-  "description": "A translation extension which uses the Gemini API to translate you mails in one click.",
-  "scripts": {
-    "build": "web-ext build --overwrite-dest -n thunderbird-translate.xpi"
-  },
-  "devDependencies": {
-    "web-ext": "^8.10.0"
-  }
+	"name": "thunderbird-translate",
+	"verson": "1.0.O",
+	"description": "A translation add-on which uses the Gemini API to translate your mails in one click.",
+	"scripts": {
+		"build": "web-ext build --overwrite-dest -n thunderbird-translate.xpi"
+	},
+	"devDependencies": {
+		"web-ext": "^8.10.0"
+	}
 }
