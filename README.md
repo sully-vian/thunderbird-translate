@@ -4,7 +4,7 @@ Thunderbird Translate adds a one-click translation banner to messages in Thunder
 
 Banner shown at the top of an email | Options page
 :-------------------------:|:-------------------------:
-![Translate banner image](/src/assets/screenshots/example-german-english.png) | ![Translate options page image](/src/assets/screenshots/example-options.png)
+![Translate banner image](screenshots/example-german-english.png) | ![Translate options page image](screenshots/example-options.png)
 
 ## Why install
 
@@ -20,20 +20,28 @@ Just download the add-on, Thunderbird will take care of the installation. Then, 
 
 - What is sent: the email message body (text/plain or text/html) is sent to the configured external translation service (Google Generative Language API) for translation.
 - What is NOT sent: account passwords or Thunderbird credentials.
-- API key: stored locally in Thunderbird extension storage (`browser.storage.local`).
+- API key: stored locally in Thunderbird browser storage (`browser.storage.local`).
 - Recommendation: do not translate sensitive or confidential content.
 
 ## Contributing
 
-Contributions welcome
+Contributions welcome, especially concerning the localization.
 
 ```bash
-# to isntall the dependencies
+# to install the dependencies
 npm install
 
+# to compile the project without minifying scripts
+npm run build:dev
+
+# to compile project and minify scripts
+npm run build:prod
+
 # to package the add-on as an .xpi file
-npm run build
+npm run build:web-ext
 ```
+
+To debug the add-on, load the `dist/manifest.json` file with Thunderbird after building the project.
 
 ## License
 
@@ -44,4 +52,5 @@ This project is distributed under the terms in [LICENSE](LICENSE)
 - Icon: [Bootstrap Icons - Translate](https://icons.getbootstrap.com/icons/translate/)
 - Translation engine: [Google Gemini 2.5 Flash](https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash)
 - HTML purifier: [DOMPurify](https://dompurify.com/)
+- Google Gen AI SDK: [@google/genai](https://googleapis.github.io/js-genai)
 

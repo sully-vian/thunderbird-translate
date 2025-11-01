@@ -1,19 +1,49 @@
-if (typeof messenger === "undefined") {
-  console.error("Messenger API not available!");
+import { GoogleGenAI } from "@google/genai";
+import DOMPurify from "dompurify";
+
+if (messenger === undefined) {
+  console.warn("Messenger API not available!");
 }
 
+// load and sanitize bannerHTML
+let sanitizedBannerHTML: string | null;
+(async () => {
+  const url = browser.runtime.getURL("src/banner/banner.html");
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.warn("Failed to fetch banner.html:", response.status);
+    return;
+  }
+  const raw = await response.text();
+  sanitizedBannerHTML = DOMPurify.sanitize(raw);
+})();
+
 messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
-  messenger.tabs.sendMessage(tab.id, { action: "showLoading" });
+  if (tab.id === undefined) {
+    console.warn("No tab ID.");
+    return;
+  }
+  messenger.tabs.sendMessage(tab.id, {
+    action: "showLoading",
+    bannerTemplate: sanitizedBannerHTML,
+  });
   const message = await messenger.messageDisplay.getDisplayedMessage(tab.id);
+  if (message == null) {
+    console.warn("Failed to get displayed message.");
+    return;
+  }
   await translateEmail(message, tab.id);
 });
 
-async function translateEmail(message, tabID) {
+async function translateEmail(
+  message: messenger.messages.MessageHeader,
+  tabID: number,
+): Promise<void> {
   const fullMessage = await messenger.messages.getFull(message.id);
   const { content, html } = extractTextFromMessage(fullMessage);
 
   if (content === undefined) {
-    console.log("Failed to get message content");
+    console.warn("Failed to get message content");
     messenger.tabs.sendMessage(tabID, {
       action: "showBanner",
       content: "Failed to get email content.",
@@ -24,7 +54,10 @@ async function translateEmail(message, tabID) {
   }
 
   try {
-    const translatedContent = await callGemini(content);
+    let translatedContent = await callGemini(content);
+    if (html) {
+      translatedContent = DOMPurify.sanitize(translatedContent);
+    }
 
     // Send a message to the content script to display the banner
     messenger.tabs.sendMessage(tabID, {
@@ -34,35 +67,39 @@ async function translateEmail(message, tabID) {
       html: html,
     });
   } catch (error) {
-    console.log("Translation failed:", error);
+    console.warn("Translation failed:", error);
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "An unexpected error occured during translation";
 
     // send an error message to the content script
     messenger.tabs.sendMessage(tabID, {
       action: "showBanner",
-      content:
-        error.message || "An unexpected error occured during translation",
+      content: errorMessage,
       status: "error",
       html: false,
     });
   }
 }
 
-function extractTextFromMessage(fullMessage) {
-  let htmlContent = null;
-  let plainContent = null;
+function extractTextFromMessage(fullMessage: messenger.messages.MessagePart): {
+  content: string | undefined;
+  html: boolean;
+} {
+  let htmlContent: string = "";
+  let plainContent: string = "";
 
-  function searchParts(parts) {
+  function searchParts(parts: messenger.messages.MessagePart[]) {
     for (const part of parts) {
       if (part.contentType === "text/html" && part.body) {
-        console.log("found html");
         htmlContent = part.body;
       }
       if (part.contentType === "text/plain" && part.body) {
-        console.log("found plain text");
         plainContent = part.body;
       }
       // multipart case, we work recursively
-      if (part.contentType.startsWith("multipart/") && part.parts) {
+      if (part.contentType?.startsWith("multipart/") && part.parts) {
         searchParts(part.parts);
       }
     }
@@ -93,18 +130,16 @@ function extractTextFromMessage(fullMessage) {
 
 // add listener for opening option page
 browser.runtime.onMessage.addListener((message) => {
-  console.log("recieved msg");
   if (message.action === "openOptionsPage") {
     // Open the options page
     browser.tabs.create({
       url: browser.runtime.getURL("/src/options/options.html"),
     });
   }
+  return false; // done processing
 });
 
-const url =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-const prompt = `
+const geminiPrompt = `
 You are a professional translator. Translate the following email to ${browser.i18n.getUILanguage()}.
 
 CRITICAL RULES:
@@ -116,7 +151,7 @@ CRITICAL RULES:
 Content to translate:
 `;
 
-async function callGemini(htmlText) {
+async function callGemini(text: string): Promise<string> {
   const storage = await browser.storage.local.get("apiKey");
 
   if (!storage.apiKey) {
@@ -125,48 +160,18 @@ async function callGemini(htmlText) {
     );
   }
 
-  const fullPrompt = prompt + htmlText;
-  console.log(fullPrompt);
+  const fullPrompt = geminiPrompt + text;
+  console.debug(fullPrompt);
 
-  const request = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-goog-api-key": storage.apiKey,
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            {
-              text: fullPrompt,
-            },
-          ],
-        },
-      ],
-    }),
-  };
+  const ai = new GoogleGenAI({ apiKey: storage.apiKey });
 
-  // console.log(JSON.stringify(request, null, 2));
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: fullPrompt,
+  });
 
-  const response = await fetch(url, request);
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.error?.message || "Translation failed due to an API error.",
-    );
+  if (response.text === undefined) {
+    throw new Error("Translation failed due to an API error.");
   }
-
-  const data = await response.json();
-
-  // console.log(JSON.stringify(data, null, 2));
-
-  // Access the actual text output:
-  if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-    const translatedHTML = data.candidates[0].content.parts[0].text;
-    return translatedHTML;
-  }
-
-  throw new Error("The API response didn't have the expected form.");
+  return response.text;
 }

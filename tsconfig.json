@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "ES2019",
+		"module": "none",
+		"lib": [
+			"DOM",
+			"ES2019"
+		],
+		"moduleResolution": "node",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"outDir": "dist/src",
+		"rootDir": "src",
+		"allowJs": false,
+		"noEmitOnError": true,
+		"types": [
+			"@types/thunderbird-webext-browser",
+			"dompurify"
+		]
+	},
+	"include": [
+		"src/**/*"
+	]
+}

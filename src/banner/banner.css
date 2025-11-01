@@ -7,14 +7,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	border-color: var(--color-neutral-border);
+	border-color: var(--color-surface-border-dark);
 	border-style: solid;
 	border-width: var(--border-width);
 }
 
 .translation-banner.success {
-	background-color: var(--color-primary-soft);
-	color: var(--color-text-highlight);
+	background-color: var(--color-surface-base-dark);
+	/*color: var(--color-text-highlight);*/
 }
 
 .translation-banner.error {
@@ -24,6 +24,7 @@
 
 #banner-text {
 	white-space: pre-wrap;
+	color: var(--color-text-base-dark);
 	/* Preserve line breaks and spaces */
 }
 
