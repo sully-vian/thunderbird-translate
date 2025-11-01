@@ -14,7 +14,7 @@ Banner shown at the top of an email | Options page
 
 ## Setting up
 
-Just download the add-on, Thunderbird will take care of the installation. Then, you can get one [here](https://aistudio.google.com/apikey) for free.
+Just download the add-on, Thunderbird will take care of the installation. If you don't have an API key yet, you can get one for **free** at [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 
 ## Privacy / Data sent
 
